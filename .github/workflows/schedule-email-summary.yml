@@ -8,6 +8,10 @@ on:
   push:
     branches: [ main, master ] # Runs when you push to main/master branch
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   email-summary:
     runs-on: ubuntu-latest
@@ -33,15 +37,33 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         cd email_summary
+        echo "Starting email summary generation..."
+        echo "Current directory: $(pwd)"
+        echo "Files in directory: $(ls -la)"
         python main.py
+        echo "Email summary generation completed"
+        echo "Files after generation: $(ls -la)"
+        
+    - name: Check Git status
+      run: |
+        echo "Git status before commit:"
+        git status
+        echo "Git diff:"
+        git diff --name-only || echo "No changes detected"
         
     - name: Commit and push changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add .
-        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update email summaries - $(date)"
-        git push
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Auto-update email summaries - $(date)"
+          git push
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Show execution summary
       run: |
