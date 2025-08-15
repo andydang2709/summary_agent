@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Summary Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-envelope-open-text"></i> Email Summary Dashboard</h1>
+                <p>View and manage your daily email summaries</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Cards -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Today's Reports</h3>
+                            <p class="stat-number" id="todayCount">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Reports</h3>
+                            <p class="stat-number" id="totalCount">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Latest Update</h3>
+                            <p class="stat-number" id="latestUpdate">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Read Today's Summary Button -->
+                <div class="read-summary-section">
+                    <button class="btn btn-read-summary" onclick="readTodaysSummary()" id="readButton">
+                        <i class="fas fa-volume-up"></i> Read Today's Email Summary
+                    </button>
+                    
+
+                    <div class="reading-status" id="readingStatus" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span id="statusText">Reading...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- File Browser -->
+            <section class="file-browser">
+                <div class="section-header">
+                    <h2><i class="fas fa-folder-open"></i> Report Files</h2>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="refreshFiles()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <select id="fileTypeFilter" class="filter-select" onchange="filterFiles()">
+                            <option value="all">All Files</option>
+                            <option value="summary">Summary Reports</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('today')" id="tab-today">
+                        <i class="fas fa-calendar-day"></i> Today's Reports
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('all')" id="tab-all">
+                        <i class="fas fa-list"></i> All Reports
+                    </button>
+                </div>
+
+                <div class="files-container">
+                    <div id="filesList" class="files-list">
+                        <!-- Files will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- File Viewer -->
+            <section class="file-viewer" id="fileViewer" style="display: none;">
+                <div class="viewer-header">
+                    <h3 id="viewerTitle">File Content</h3>
+                    <button class="btn btn-secondary" onclick="closeViewer()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+                <div class="viewer-content">
+                    <div id="fileContent" class="file-content">
+                        <!-- File content will be displayed here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Email Summary Dashboard</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+COMPREHENSIVE EMAIL ANALYSIS REPORT
+============================================================
+
+Generated: 2025-08-15 14:12:58
+Total emails analyzed: 7
+Analysis timestamp: 2025-08-15T14:12:58.902663
+
+📋 COMPREHENSIVE SUMMARY
+----------------------------------------
+This email batch primarily consists of notifications, job alerts, and promotional content. Several emails are related to job searching and career development, including LinkedIn job alerts for a Business Management Analyst role at Toyota and an Indeed alert for marketing intern positions, particularly at BMW. Other emails include a LinkedIn connection request, daily summaries from financial institutions (Chase and American Express), and promotional content from Medium and American Express. The Social Security Administration email is likely a general announcement.
+
+🚨 HIGH PRIORITY EMAILS
+----------------------------------------
+No high priority emails identified.
+
+✅ ACTION ITEMS
+----------------------------------------
+No action items identified.
+

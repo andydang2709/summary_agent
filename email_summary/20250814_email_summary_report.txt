@@ -1,0 +1,19 @@
+COMPREHENSIVE EMAIL ANALYSIS REPORT
+============================================================
+
+Generated: 2025-08-14 18:25:18
+Total emails analyzed: 16
+Analysis timestamp: 2025-08-14T18:25:18.339846
+
+📋 COMPREHENSIVE SUMMARY
+----------------------------------------
+The email batch consists of a mix of financial notifications, job-related updates, marketing promotions, and personal updates. Several emails are related to financial accounts, including deposit limit increases, trade confirmations, and transaction alerts from Robinhood and Chase. Job-related emails include application updates from Guidehouse, job recommendations from LinkedIn, and job postings from Gentherm. Marketing emails promote educational resources, writing platforms, and financial insights. Personal emails include event announcements and account summaries. The emails show a pattern of daily and weekly summaries, job alerts, and promotional content.
+
+🚨 HIGH PRIORITY EMAILS
+----------------------------------------
+No high priority emails identified.
+
+✅ ACTION ITEMS
+----------------------------------------
+No action items identified.
+

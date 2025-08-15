@@ -1,0 +1,19 @@
+COMPREHENSIVE EMAIL ANALYSIS REPORT
+============================================================
+
+Generated: 2025-08-14 18:27:36
+Total emails analyzed: 16
+Analysis timestamp: 2025-08-14T18:27:36.119106
+
+📋 COMPREHENSIVE SUMMARY
+----------------------------------------
+The emails received cover a range of topics, including financial notifications, job applications and recommendations, marketing promotions, event invitations, and daily summaries. Several emails are automated notifications from financial institutions (Robinhood, American Express, Chase), providing account updates and transaction confirmations. Job-related emails include a Guidehouse application notification, LinkedIn job recommendations, and a Superprof tutoring opportunity. Marketing emails from various sources (Extern, Saigon Classical, Medium, Amtrak, Tech Stock Insider) promote events, services, and content. The volume of promotional emails suggests a need to review and potentially unsubscribe from some lists. Several emails are daily/weekly summaries, providing a snapshot of account activity or content updates.
+
+🚨 HIGH PRIORITY EMAILS
+----------------------------------------
+No high priority emails identified.
+
+✅ ACTION ITEMS
+----------------------------------------
+No action items identified.
+
