@@ -1,0 +1,54 @@
+{
+  "generated_at": "2025-08-15T16:49:12.296742",
+  "total_files": 6,
+  "files": [
+    {
+      "name": "20250815_email_summary_report.txt",
+      "type": "summary",
+      "size": "1.0 KB",
+      "date": "2025-08-15",
+      "path": "logs/20250815_email_summary_report.txt",
+      "content": "COMPREHENSIVE EMAIL ANALYSIS REPORT\n============================================================\n\nGenerated: 2025-08-15 14:12:58\nTotal emails analyzed: 7\nAnalysis timestamp: 2025-08-15T14:12:58.902663\n\n📋 COMPREHENSIVE SUMMARY\n----------------------------------------\nThis email batch primarily consists of notifications, job alerts, and promotional content. Several emails are related to job searching and career development, including LinkedIn job alerts for a Business Management Analyst role at Toyota and an Indeed alert for marketing intern positions, particularly at BMW. Other emails include a LinkedIn connection request, daily summaries from financial institutions (Chase and American Express), and promotional content from Medium and American Express. The Social Security Administration email is likely a general announcement.\n\n🚨 HIGH PRIORITY EMAILS\n----------------------------------------\nNo high priority emails identified.\n\n✅ ACTION ITEMS\n----------------------------------------\nNo action items identified.\n\n"
+    },
+    {
+      "name": "20250815_storytelling_summary.txt",
+      "type": "storytelling",
+      "size": "797.0 B",
+      "date": "2025-08-15",
+      "path": "logs/20250815_storytelling_summary.txt",
+      "content": "Okay, here's your email summary, ready to be read aloud:\n\nHey! So, checking in on your inbox this afternoon, it looks like it was a pretty standard day. You received a handful of emails, mostly notifications and some job alerts. There was a LinkedIn alert about a Business Management Analyst position at Toyota – sounds interesting! And you also got an Indeed alert for marketing intern positions, with BMW mentioned. You also have a LinkedIn connection request waiting.\n\nBesides those, you got your usual daily summaries from Chase and American Express, and some promotional stuff from Medium and American Express. Oh, and there was a general announcement from the Social Security Administration. No urgent stuff today, so you're all clear on the action items front! Enjoy the rest of your day!"
+    },
+    {
+      "name": "today_email_summary_report.txt",
+      "type": "summary",
+      "size": "1.0 KB",
+      "date": "2025-08-15",
+      "path": "today_email_summary_report.txt",
+      "content": "COMPREHENSIVE EMAIL ANALYSIS REPORT\n============================================================\n\nGenerated: 2025-08-15 14:12:58\nTotal emails analyzed: 7\nAnalysis timestamp: 2025-08-15T14:12:58.902663\n\n📋 COMPREHENSIVE SUMMARY\n----------------------------------------\nThis email batch primarily consists of notifications, job alerts, and promotional content. Several emails are related to job searching and career development, including LinkedIn job alerts for a Business Management Analyst role at Toyota and an Indeed alert for marketing intern positions, particularly at BMW. Other emails include a LinkedIn connection request, daily summaries from financial institutions (Chase and American Express), and promotional content from Medium and American Express. The Social Security Administration email is likely a general announcement.\n\n🚨 HIGH PRIORITY EMAILS\n----------------------------------------\nNo high priority emails identified.\n\n✅ ACTION ITEMS\n----------------------------------------\nNo action items identified.\n\n"
+    },
+    {
+      "name": "executive_summary.txt",
+      "type": "executive",
+      "size": "797.0 B",
+      "date": "2025-08-15",
+      "path": "executive_summary.txt",
+      "content": "Okay, here's your email summary, ready to be read aloud:\n\nHey! So, checking in on your inbox this afternoon, it looks like it was a pretty standard day. You received a handful of emails, mostly notifications and some job alerts. There was a LinkedIn alert about a Business Management Analyst position at Toyota – sounds interesting! And you also got an Indeed alert for marketing intern positions, with BMW mentioned. You also have a LinkedIn connection request waiting.\n\nBesides those, you got your usual daily summaries from Chase and American Express, and some promotional stuff from Medium and American Express. Oh, and there was a general announcement from the Social Security Administration. No urgent stuff today, so you're all clear on the action items front! Enjoy the rest of your day!"
+    },
+    {
+      "name": "20250814_storytelling_summary.txt",
+      "type": "storytelling",
+      "size": "735.0 B",
+      "date": "2025-08-14",
+      "path": "logs/20250814_storytelling_summary.txt",
+      "content": "Hey there! So, your inbox had a pretty busy day today. You received a total of 16 emails, covering all sorts of things. There were the usual financial updates from Robinhood, American Express, and Chase – you know, the ones keeping an eye on your money. You also got a notification about your Guidehouse application, some LinkedIn job recommendations, and even a tutoring opportunity on Superprof.\n\nAnd then there was a whole bunch of marketing stuff! You got emails from Extern, Saigon Classical, Medium, Amtrak, and Tech Stock Insider. Sounds like you might want to take a quick peek and see if there are any lists you want to unsubscribe from. The good news is, there are no urgent action items for you today, so you're all clear!"
+    },
+    {
+      "name": "20250814_email_summary_report.txt",
+      "type": "summary",
+      "size": "1.3 KB",
+      "date": "2025-08-14",
+      "path": "logs/20250814_email_summary_report.txt",
+      "content": "COMPREHENSIVE EMAIL ANALYSIS REPORT\n============================================================\n\nGenerated: 2025-08-14 18:27:36\nTotal emails analyzed: 16\nAnalysis timestamp: 2025-08-14T18:27:36.119106\n\n📋 COMPREHENSIVE SUMMARY\n----------------------------------------\nThe emails received cover a range of topics, including financial notifications, job applications and recommendations, marketing promotions, event invitations, and daily summaries. Several emails are automated notifications from financial institutions (Robinhood, American Express, Chase), providing account updates and transaction confirmations. Job-related emails include a Guidehouse application notification, LinkedIn job recommendations, and a Superprof tutoring opportunity. Marketing emails from various sources (Extern, Saigon Classical, Medium, Amtrak, Tech Stock Insider) promote events, services, and content. The volume of promotional emails suggests a need to review and potentially unsubscribe from some lists. Several emails are daily/weekly summaries, providing a snapshot of account activity or content updates.\n\n🚨 HIGH PRIORITY EMAILS\n----------------------------------------\nNo high priority emails identified.\n\n✅ ACTION ITEMS\n----------------------------------------\nNo action items identified.\n\n"
+    }
+  ]
+}

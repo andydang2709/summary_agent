@@ -49,106 +49,108 @@ async function refreshFiles() {
     }
 }
 
-// Discover real files from the email_summary/logs directory
+// Discover real files from the static file index (for GitHub Pages deployment)
 async function discoverFiles() {
     try {
-        // Make a request to scan the logs directory
-        const response = await fetch('/scan-logs');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const files = await response.json();
-        console.log('Raw server response:', files);
-        
-        // Re-process all files through parseFileInfo to ensure correct filtering
-        const processedFiles = [];
-        for (const file of files) {
-            // If the file already has content, use it; otherwise, we'd need to fetch it
-            if (file.content) {
+        // Try to load from the static file index first (GitHub Pages compatible)
+        const response = await fetch('./file_index.json');
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Loaded from static file index:', data);
+            
+            // Process files from the index
+            const processedFiles = [];
+            for (const file of data.files) {
+                // Files from the index already have content, so we can use them directly
                 const processedFile = parseFileInfo(file.name, file.content);
                 if (processedFile) {
                     processedFiles.push(processedFile);
                 }
-            } else {
-                // If no content, try to fetch it
-                try {
-                    const fileResponse = await fetch(`/logs/${file.name}`);
-                    if (fileResponse.ok) {
-                        const content = await fileResponse.text();
-                        const processedFile = parseFileInfo(file.name, content);
-                        if (processedFile) {
-                            processedFiles.push(processedFile);
-                        }
-                    }
-                } catch (fileError) {
-                    console.warn(`Could not read file ${file.name}:`, fileError);
-                }
             }
+            
+            allFiles = processedFiles;
+            console.log(`Processed ${data.files.length} files from index, ${processedFiles.length} accepted files`);
+            console.log('Accepted file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
+            
+            // Apply current filters after loading files
+            applyCurrentFilters();
+            return;
         }
         
-        allFiles = processedFiles;
-        console.log(`Processed ${files.length} files, ${processedFiles.length} accepted files`);
-        console.log('Accepted file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
+        // Fallback: try to read files directly from the logs directory
+        console.log('Static file index not found, trying direct file access...');
+        const files = await scanLogsDirectory();
+        console.log('Fallback raw files:', files);
+        
+        // The scanLogsDirectory function already processes files through parseFileInfo
+        allFiles = files;
+        console.log(`Fallback loaded ${files.length} files`);
+        console.log('Fallback file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
+        
         // Apply current filters after loading files
         applyCurrentFilters();
         
     } catch (error) {
-        console.error('Error scanning logs directory:', error);
-        
-        // Fallback: try to read files directly from the logs directory
-        try {
-            const files = await scanLogsDirectory();
-            console.log('Fallback raw files:', files);
-            
-            // The scanLogsDirectory function already processes files through parseFileInfo
-            allFiles = files;
-            console.log(`Fallback loaded ${files.length} files`);
-            console.log('Fallback file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
-            // Apply current filters after loading files
-            applyCurrentFilters();
-        } catch (fallbackError) {
-            console.error('Fallback scanning also failed:', fallbackError);
-            throw new Error('Unable to scan logs directory. Please ensure the server is running and the logs directory exists.');
-        }
+        console.error('Error discovering files:', error);
+        throw new Error('Unable to load files. Please ensure the file_index.json exists or the logs directory is accessible.');
     }
 }
 
-// Fallback function to scan logs directory
+// Fallback function to scan logs directory (GitHub Pages compatible)
 async function scanLogsDirectory() {
     const files = [];
     
     try {
-        // Try to read the logs directory listing
-        const response = await fetch('/logs/');
-        if (response.ok) {
-            const html = await response.text();
-            // Parse the directory listing to extract file information
-            const fileLinks = html.match(/href="([^"]+\.txt)"/g);
-            
-            if (fileLinks) {
-                for (const link of fileLinks) {
-                    const fileName = link.match(/href="([^"]+)"/)[1];
-                    if (fileName.endsWith('.txt')) {
-                        try {
-                            // Read the file content
-                            const fileResponse = await fetch(`/logs/${fileName}`);
-                            if (fileResponse.ok) {
-                                                            const content = await fileResponse.text();
-                            const fileInfo = parseFileInfo(fileName, content);
-                            if (fileInfo) { // Only add non-null files
-                                files.push(fileInfo);
-                            }
-                            }
-                        } catch (fileError) {
-                            console.warn(`Could not read file ${fileName}:`, fileError);
-                        }
+        // For GitHub Pages, we need to try different approaches
+        // First, try to access the logs directory directly
+        const logsDir = './logs/';
+        
+        // Try to read individual files that we know should exist
+        const knownFiles = [
+            '20250815_email_summary_report.txt',
+            '20250815_storytelling_summary.txt',
+            '20250814_email_summary_report.txt',
+            '20250814_storytelling_summary.txt',
+            'today_email_summary_report.txt',
+            'executive_summary.txt'
+        ];
+        
+        for (const fileName of knownFiles) {
+            try {
+                // Try to read the file content
+                const fileResponse = await fetch(`${logsDir}${fileName}`);
+                if (fileResponse.ok) {
+                    const content = await fileResponse.text();
+                    const fileInfo = parseFileInfo(fileName, content);
+                    if (fileInfo) {
+                        files.push(fileInfo);
+                        console.log(`Successfully loaded: ${fileName}`);
                     }
+                } else {
+                    console.log(`File not accessible: ${fileName} (${fileResponse.status})`);
                 }
+            } catch (fileError) {
+                console.warn(`Could not read file ${fileName}:`, fileError);
             }
         }
         
-
+        // Also try root directory for current files
+        const rootFiles = ['today_email_summary_report.txt', 'executive_summary.txt'];
+        for (const fileName of rootFiles) {
+            try {
+                const fileResponse = await fetch(`./${fileName}`);
+                if (fileResponse.ok) {
+                    const content = await fileResponse.text();
+                    const fileInfo = parseFileInfo(fileName, content);
+                    if (fileInfo) {
+                        files.push(fileInfo);
+                        console.log(`Successfully loaded root file: ${fileName}`);
+                    }
+                }
+            } catch (fileError) {
+                console.warn(`Could not read root file ${fileName}:`, fileError);
+            }
+        }
         
     } catch (error) {
         console.error('Error in fallback scanning:', error);
@@ -193,7 +195,7 @@ function parseFileInfo(fileName, content) {
     };
 }
 
-// Find the corresponding storytelling file for a given date
+// Find the corresponding storytelling file for a given date (GitHub Pages compatible)
 async function findStorytellingFile(targetDate) {
     try {
         // Convert date from YYYY-MM-DD to YYYYMMDD format
@@ -204,8 +206,8 @@ async function findStorytellingFile(targetDate) {
         console.log(`Looking for storytelling file: ${storytellingFileName}`);
         console.log(`Target date: ${targetDate}, Date parts: ${dateParts}, Date string: ${dateStr}`);
         
-        // Try to fetch the storytelling file from logs directory
-        const logsPath = `/logs/${storytellingFileName}`;
+        // Try to fetch the storytelling file from logs directory (GitHub Pages compatible)
+        const logsPath = `./logs/${storytellingFileName}`;
         console.log(`Trying to fetch from: ${logsPath}`);
         
         const response = await fetch(logsPath);
@@ -218,11 +220,11 @@ async function findStorytellingFile(targetDate) {
         } else {
             console.log(`Storytelling file not found: ${storytellingFileName}, Status: ${response.status}`);
             
-            // Try alternative paths
+            // Try alternative paths for GitHub Pages
             const alternativePaths = [
-                `/${storytellingFileName}`,
-                `/email_summary/logs/${storytellingFileName}`,
-                `/email_summary/${storytellingFileName}`
+                `./${storytellingFileName}`,
+                `./email_summary/logs/${storytellingFileName}`,
+                `./email_summary/${storytellingFileName}`
             ];
             
             for (const altPath of alternativePaths) {

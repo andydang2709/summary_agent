@@ -56,17 +56,26 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add .
+        git add ../file_index.json || echo "File index not found in parent directory"
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Auto-update email summaries - $(date)"
+          git commit -m "Auto-update email summaries and file index - $(date)"
           git push
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Generate file index
+      run: |
+        cd email_summary
+        python generate_file_index.py
+        echo "File index generated successfully"
         
     - name: Show execution summary
       run: |
         echo "Email summary workflow completed successfully!"
         echo "Generated files:"
         ls -la email_summary/*.txt email_summary/logs/*.txt 2>/dev/null || echo "No summary files found"
+        echo "File index:"
+        ls -la file_index.json 2>/dev/null || echo "File index not found"

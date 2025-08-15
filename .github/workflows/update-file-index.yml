@@ -1,0 +1,40 @@
+name: Update File Index
+
+on:
+  push:
+    paths:
+      - 'email_summary/logs/**'
+      - 'email_summary/today_email_summary_report.txt'
+      - 'email_summary/executive_summary.txt'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        cd email_summary
+        pip install -r requirements.txt
+        
+    - name: Generate file index
+      run: |
+        cd email_summary
+        python generate_file_index.py
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add file_index.json
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update file index [skip ci]"
+        git push
