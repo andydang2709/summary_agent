@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize dashboard
 function initializeDashboard() {
+    console.log('🚀 Initializing dashboard...');
     refreshFiles();
     updateStats();
     
@@ -23,6 +24,8 @@ function initializeDashboard() {
 async function refreshFiles() {
     const filesList = document.getElementById('filesList');
     
+    console.log('🔄 Refreshing files...');
+    
     // Show loading state
     filesList.innerHTML = `
         <div class="loading">
@@ -32,13 +35,13 @@ async function refreshFiles() {
     `;
     
     try {
-        // Discover real files from the email_summary/logs directory
+        // Discover real files from the static file index (GitHub Pages compatible)
         await discoverFiles();
         
-
+        console.log('✅ Files refreshed successfully');
         
     } catch (error) {
-        console.error('Error refreshing files:', error);
+        console.error('❌ Error refreshing files:', error);
         filesList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-exclamation-triangle"></i>
@@ -161,15 +164,15 @@ async function scanLogsDirectory() {
 
 // Parse file information from filename and content
 function parseFileInfo(fileName, content) {
-    console.log(`Processing file: ${fileName}`);
+    console.log(`🔍 Processing file: ${fileName}`);
     
-    // Only include files with format YYYYMMDD_email_summary_report.txt
-    if (!fileName.match(/^\d{8}_email_summary_report\.txt$/)) {
-        console.log(`Rejecting file: ${fileName} - doesn't match pattern`);
-        return null; // This will filter out all other files
+    // Accept all .txt files, not just email summary reports
+    if (!fileName.endsWith('.txt')) {
+        console.log(`❌ Rejecting file: ${fileName} - not a .txt file`);
+        return null;
     }
     
-    console.log(`Accepting file: ${fileName} - matches pattern`);
+    console.log(`✅ Accepting file: ${fileName} - is a .txt file`);
     
     // Extract date from filename (format: YYYYMMDD_*)
     let date = 'Unknown';
@@ -177,17 +180,33 @@ function parseFileInfo(fileName, content) {
     if (dateMatch) {
         const dateStr = dateMatch[1];
         date = `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
+    } else if (fileName === 'today_email_summary_report.txt' || fileName === 'executive_summary.txt') {
+        // Use today's date for current files
+        date = new Date().toISOString().split('T')[0];
+    }
+    
+    // Determine file type based on filename
+    let fileType = 'summary';
+    if (fileName.includes('storytelling')) {
+        fileType = 'storytelling';
+    } else if (fileName.includes('executive')) {
+        fileType = 'executive';
     }
     
     // Calculate file size
     const size = formatFileSize(new Blob([content]).size);
     
     // Determine path
-    let path = `logs/${fileName}`;
+    let path = fileName;
+    if (date !== 'Unknown' && !fileName.includes('today_') && !fileName.includes('executive')) {
+        path = `logs/${fileName}`;
+    }
+    
+    console.log(`📁 File info: ${fileName} | Type: ${fileType} | Date: ${date} | Size: ${size}`);
     
     return {
         name: fileName,
-        type: 'summary',
+        type: fileType,
         size: size,
         date: date,
         path: path,
@@ -386,24 +405,27 @@ function switchTab(tabName) {
 // Apply current filters (tab + file type filter)
 function applyCurrentFilters() {
     let filtered = [...allFiles];
-    console.log(`Applying filters: currentTab=${currentTab}, total files=${allFiles.length}`);
+    console.log(`🔍 Applying filters: currentTab=${currentTab}, total files=${allFiles.length}`);
+    console.log(`📁 All files:`, allFiles.map(f => ({ name: f.name, date: f.date, type: f.type })));
     
     // Apply tab filter first
     if (currentTab === 'today') {
         const today = new Date().toISOString().split('T')[0];
         filtered = filtered.filter(file => file.date === today);
-        console.log(`Today filter applied: ${filtered.length} files for date ${today}`);
+        console.log(`📅 Today filter applied: ${filtered.length} files for date ${today}`);
     }
     
     // Then apply file type filter
     const filterValue = document.getElementById('fileTypeFilter').value;
     if (filterValue !== 'all') {
         filtered = filtered.filter(file => file.type === filterValue);
-        console.log(`Type filter applied: ${filtered.length} files of type ${filterValue}`);
+        console.log(`🏷️ Type filter applied: ${filtered.length} files of type ${filterValue}`);
     }
     
     filteredFiles = filtered;
-    console.log(`Final filtered files: ${filteredFiles.length}`);
+    console.log(`✅ Final filtered files: ${filteredFiles.length}`);
+    console.log(`📋 Filtered files:`, filteredFiles.map(f => ({ name: f.name, date: f.date, type: f.type })));
+    
     displayFiles();
     updateStats();
 }

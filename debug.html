@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug File Loading</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug File Loading</h1>
+    
+    <div class="debug-section info">
+        <h3>📋 Test Steps</h3>
+        <p>This page will test various methods of loading files to identify the issue.</p>
+    </div>
+    
+    <div class="debug-section">
+        <h3>1️⃣ Test File Index Loading</h3>
+        <button onclick="testFileIndex()">Test file_index.json</button>
+        <div id="fileIndexResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>2️⃣ Test Direct File Access</h3>
+        <button onclick="testDirectFiles()">Test Direct File Access</button>
+        <div id="directFilesResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>3️⃣ Test Logs Directory</h3>
+        <button onclick="testLogsDirectory()">Test Logs Directory</button>
+        <div id="logsResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>4️⃣ Browser Console</h3>
+        <p>Open your browser's Developer Tools (F12) and check the Console tab for detailed error messages.</p>
+    </div>
+    
+    <script>
+        async function testFileIndex() {
+            const result = document.getElementById('fileIndexResult');
+            result.innerHTML = '<p>🔄 Testing...</p>';
+            
+            try {
+                console.log('Testing file_index.json loading...');
+                const response = await fetch('./file_index.json');
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('File index data:', data);
+                    result.innerHTML = `
+                        <div class="success">
+                            <h4>✅ File Index Loaded Successfully!</h4>
+                            <p><strong>Generated:</strong> ${data.generated_at}</p>
+                            <p><strong>Total Files:</strong> ${data.total_files}</p>
+                            <h5>Files Found:</h5>
+                            <ul>
+                                ${data.files.map(file => `
+                                    <li><strong>${file.name}</strong> (${file.type}) - ${file.date} - ${file.size}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            <h4>❌ File Index Load Failed</h4>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>URL:</strong> ${response.url}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error testing file index:', error);
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Error Loading File Index</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testDirectFiles() {
+            const result = document.getElementById('directFilesResult');
+            result.innerHTML = '<p>🔄 Testing...</p>';
+            
+            const testFiles = [
+                './logs/20250815_email_summary_report.txt',
+                './logs/20250815_storytelling_summary.txt',
+                './today_email_summary_report.txt',
+                './executive_summary.txt'
+            ];
+            
+            let results = [];
+            
+            for (const filePath of testFiles) {
+                try {
+                    console.log(`Testing file: ${filePath}`);
+                    const response = await fetch(filePath);
+                    const status = response.status;
+                    const accessible = response.ok;
+                    
+                    results.push({
+                        path: filePath,
+                        status: status,
+                        accessible: accessible,
+                        size: accessible ? (await response.text()).length : 0
+                    });
+                    
+                    console.log(`File ${filePath}: ${status} (${accessible ? 'OK' : 'FAIL'})`);
+                } catch (error) {
+                    console.error(`Error testing ${filePath}:`, error);
+                    results.push({
+                        path: filePath,
+                        status: 'ERROR',
+                        accessible: false,
+                        error: error.message
+                    });
+                }
+            }
+            
+            result.innerHTML = `
+                <div class="info">
+                    <h4>📁 Direct File Access Results</h4>
+                    <table border="1" style="border-collapse: collapse; width: 100%;">
+                        <tr>
+                            <th>File Path</th>
+                            <th>Status</th>
+                            <th>Accessible</th>
+                            <th>Size/Error</th>
+                        </tr>
+                        ${results.map(r => `
+                            <tr>
+                                <td>${r.path}</td>
+                                <td>${r.status}</td>
+                                <td>${r.accessible ? '✅' : '❌'}</td>
+                                <td>${r.accessible ? r.size + ' chars' : (r.error || 'N/A')}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            `;
+        }
+        
+        async function testLogsDirectory() {
+            const result = document.getElementById('logsResult');
+            result.innerHTML = '<p>🔄 Testing...</p>';
+            
+            try {
+                console.log('Testing logs directory access...');
+                const response = await fetch('./logs/');
+                console.log('Logs directory response:', response.status);
+                
+                if (response.ok) {
+                    const html = await response.text();
+                    console.log('Logs directory HTML length:', html.length);
+                    result.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Logs Directory Accessible</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Content Length:</strong> ${html.length} characters</p>
+                            <details>
+                                <summary>View HTML Content</summary>
+                                <pre>${html.substring(0, 500)}...</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            <h4>❌ Logs Directory Not Accessible</h4>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error testing logs directory:', error);
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Error Accessing Logs Directory</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            console.log('Debug page loaded. Running tests...');
+            setTimeout(() => {
+                testFileIndex();
+                setTimeout(() => testDirectFiles(), 1000);
+                setTimeout(() => testLogsDirectory(), 2000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
