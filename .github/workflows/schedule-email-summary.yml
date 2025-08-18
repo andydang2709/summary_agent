@@ -57,7 +57,20 @@ jobs:
         echo "Git diff:"
         git diff --name-only || echo "No changes detected"
         
+    - name: Debug Secrets
+      run: |
+        echo "=== SECRET DEBUGGING ==="
+        echo "Direct secret check:"
+        if [ -n "${{ secrets.DATA_REPO_TOKEN }}" ]; then
+          echo "✅ Direct secret available (length: ${#DATA_REPO_TOKEN})"
+        else
+          echo "❌ Direct secret NOT available"
+        fi
+        echo "========================"
+        
     - name: Push to Data Repository
+      env:
+        DATA_REPO_TOKEN: ${{ secrets.DATA_REPO_TOKEN }}
       run: |
         # Configure git for the data repository
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -65,7 +78,7 @@ jobs:
         
         # Debug: Check if secrets are available (without exposing values)
         echo "Checking secrets availability..."
-        if [ -n "${{ secrets.DATA_REPO_TOKEN }}" ]; then
+        if [ -n "$DATA_REPO_TOKEN" ]; then
           echo "✅ DATA_REPO_TOKEN is available (length: ${#DATA_REPO_TOKEN})"
           echo "Token preview: ${DATA_REPO_TOKEN:0:4}...${DATA_REPO_TOKEN: -4}"
         else
@@ -77,7 +90,7 @@ jobs:
         echo "Base URL: https://x-access-token:${DATA_REPO_TOKEN:0:4}...@github.com/andydang2709/email-summary-data.git"
         
         # Add the data repository as a remote using Personal Access Token
-        git remote add data-repo https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/andydang2709/email-summary-data.git
+        git remote add data-repo https://x-access-token:$DATA_REPO_TOKEN@github.com/andydang2709/email-summary-data.git
         
         # Debug: Check what remote was created
         echo "Remote URL created:"
