@@ -59,6 +59,20 @@ def generate_file_index():
     
     print(f"💾 Backup saved to: {backup_file}")
     
+    # Create latest directory structure for the data repository
+    latest_dir = '../latest'
+    if not os.path.exists(latest_dir):
+        os.makedirs(latest_dir)
+        print(f"✅ Created latest directory: {latest_dir}")
+    
+    # Copy current files to latest directory
+    current_files = ['today_email_summary_report.txt', 'executive_summary.txt']
+    for filename in current_files:
+        if os.path.exists(filename):
+            import shutil
+            shutil.copy2(filename, os.path.join(latest_dir, filename))
+            print(f"✅ Copied {filename} to latest directory")
+    
     return index
 
 def get_file_info(file_path, filename):

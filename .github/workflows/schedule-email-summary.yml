@@ -44,6 +44,12 @@ jobs:
         echo "Email summary generation completed"
         echo "Files after generation: $(ls -la)"
         
+    - name: Generate file index
+      run: |
+        cd email_summary
+        python generate_file_index.py
+        echo "File index generated successfully"
+        
     - name: Check Git status
       run: |
         echo "Git status before commit:"
@@ -51,26 +57,32 @@ jobs:
         echo "Git diff:"
         git diff --name-only || echo "No changes detected"
         
-    - name: Generate file index
+    - name: Push to Data Repository
       run: |
-        cd email_summary
-        python generate_file_index.py
-        echo "File index generated successfully"
-        
-    - name: Commit and push changes
-      run: |
+        # Configure git for the data repository
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
+        
+        # Add the data repository as a remote
+        git remote add data-repo https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/${{ secrets.DATA_REPO_OWNER }}/email-summary-data.git
+        
+        # Create a new branch for the data
+        git checkout -b data-update-$(date +%Y%m%d-%H%M%S)
+        
+        # Add all generated files
         git add .
         git add ../file_index.json || echo "File index not found in parent directory"
+        
+        # Commit changes
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
           git commit -m "Auto-update email summaries and file index - $(date)"
-          git push
+          
+          # Push to data repository
+          git push data-repo HEAD:main --force
+          echo "Successfully pushed to data repository"
         fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Show execution summary
       run: |

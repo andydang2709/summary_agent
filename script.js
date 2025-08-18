@@ -52,14 +52,19 @@ async function refreshFiles() {
     }
 }
 
-// Discover real files from the static file index (for GitHub Pages deployment)
+// Discover real files from the data repository (GitHub Pages deployment)
 async function discoverFiles() {
     try {
-        // Try to load from the static file index first (GitHub Pages compatible)
-        const response = await fetch('./file_index.json');
+        // Configuration for data repository
+        const DATA_REPO_URL = 'https://andydang2709.github.io/email-summary-data';
+        
+        console.log(`🔍 Attempting to load from data repository: ${DATA_REPO_URL}`);
+        
+        // Try to load from the data repository file index first
+        const response = await fetch(`${DATA_REPO_URL}/file_index.json`);
         if (response.ok) {
             const data = await response.json();
-            console.log('Loaded from static file index:', data);
+            console.log('✅ Loaded from data repository file index:', data);
             
             // Process files from the index
             const processedFiles = [];
@@ -72,91 +77,96 @@ async function discoverFiles() {
             }
             
             allFiles = processedFiles;
-            console.log(`Processed ${data.files.length} files from index, ${processedFiles.length} accepted files`);
-            console.log('Accepted file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
+            console.log(`📁 Processed ${data.files.length} files from data repository, ${processedFiles.length} accepted files`);
+            console.log('✅ Accepted file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
             
             // Apply current filters after loading files
             applyCurrentFilters();
             return;
         }
         
-        // Fallback: try to read files directly from the logs directory
-        console.log('Static file index not found, trying direct file access...');
-        const files = await scanLogsDirectory();
-        console.log('Fallback raw files:', files);
+        // Fallback: try to read files directly from the data repository
+        console.log('⚠️ Data repository file index not found, trying direct file access...');
+        const files = await scanDataRepository();
+        console.log('📁 Fallback raw files:', files);
         
-        // The scanLogsDirectory function already processes files through parseFileInfo
+        // The scanDataRepository function already processes files through parseFileInfo
         allFiles = files;
-        console.log(`Fallback loaded ${files.length} files`);
-        console.log('Fallback file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
+        console.log(`📊 Fallback loaded ${files.length} files`);
+        console.log('📋 Fallback file details:', allFiles.map(f => ({ name: f.name, date: f.date, path: f.path })));
         
         // Apply current filters after loading files
         applyCurrentFilters();
         
     } catch (error) {
-        console.error('Error discovering files:', error);
-        throw new Error('Unable to load files. Please ensure the file_index.json exists or the logs directory is accessible.');
+        console.error('❌ Error discovering files:', error);
+        throw new Error('Unable to load files from data repository. Please ensure the email-summary-data repository is set up and accessible.');
     }
 }
 
-// Fallback function to scan logs directory (GitHub Pages compatible)
-async function scanLogsDirectory() {
+// Fallback function to scan data repository (GitHub Pages compatible)
+async function scanDataRepository() {
     const files = [];
+    const DATA_REPO_URL = 'https://andydang2709.github.io/email-summary-data';
     
     try {
-        // For GitHub Pages, we need to try different approaches
-        // First, try to access the logs directory directly
-        const logsDir = './logs/';
+        console.log(`🔍 Scanning data repository: ${DATA_REPO_URL}`);
         
-        // Try to read individual files that we know should exist
+        // Try to read individual files from the data repository
         const knownFiles = [
-            '20250815_email_summary_report.txt',
-            '20250815_storytelling_summary.txt',
-            '20250814_email_summary_report.txt',
-            '20250814_storytelling_summary.txt',
-            'today_email_summary_report.txt',
-            'executive_summary.txt'
+            'logs/20250817_email_summary_report.txt',
+            'logs/20250817_storytelling_summary.txt',
+            'logs/20250816_email_summary_report.txt',
+            'logs/20250816_storytelling_summary.txt',
+            'logs/20250815_email_summary_report.txt',
+            'logs/20250815_storytelling_summary.txt',
+            'logs/20250814_email_summary_report.txt',
+            'logs/20250814_storytelling_summary.txt',
+            'latest/today_email_summary_report.txt',
+            'latest/executive_summary.txt'
         ];
         
-        for (const fileName of knownFiles) {
+        for (const filePath of knownFiles) {
             try {
-                // Try to read the file content
-                const fileResponse = await fetch(`${logsDir}${fileName}`);
+                // Try to read the file content from data repository
+                const fileResponse = await fetch(`${DATA_REPO_URL}/${filePath}`);
                 if (fileResponse.ok) {
                     const content = await fileResponse.text();
+                    const fileName = filePath.split('/').pop(); // Extract filename from path
                     const fileInfo = parseFileInfo(fileName, content);
                     if (fileInfo) {
                         files.push(fileInfo);
-                        console.log(`Successfully loaded: ${fileName}`);
+                        console.log(`✅ Successfully loaded from data repo: ${filePath}`);
                     }
                 } else {
-                    console.log(`File not accessible: ${fileName} (${fileResponse.status})`);
+                    console.log(`⚠️ File not accessible from data repo: ${filePath} (${fileResponse.status})`);
                 }
             } catch (fileError) {
-                console.warn(`Could not read file ${fileName}:`, fileError);
+                console.warn(`❌ Could not read file ${filePath} from data repo:`, fileError);
             }
         }
         
-        // Also try root directory for current files
-        const rootFiles = ['today_email_summary_report.txt', 'executive_summary.txt'];
-        for (const fileName of rootFiles) {
+        // Also try latest directory for current files
+        const latestFiles = ['latest/today_email_summary_report.txt', 'latest/executive_summary.txt'];
+        for (const filePath of latestFiles) {
             try {
-                const fileResponse = await fetch(`./${fileName}`);
+                const fileResponse = await fetch(`${DATA_REPO_URL}/${filePath}`);
                 if (fileResponse.ok) {
                     const content = await fileResponse.text();
+                    const fileName = filePath.split('/').pop();
                     const fileInfo = parseFileInfo(fileName, content);
                     if (fileInfo) {
                         files.push(fileInfo);
-                        console.log(`Successfully loaded root file: ${fileName}`);
+                        console.log(`✅ Successfully loaded latest file: ${fileName}`);
                     }
                 }
             } catch (fileError) {
-                console.warn(`Could not read root file ${fileName}:`, fileError);
+                console.warn(`❌ Could not read latest file ${filePath}:`, fileError);
             }
         }
         
     } catch (error) {
-        console.error('Error in fallback scanning:', error);
+        console.error('❌ Error scanning data repository:', error);
     }
     
     return files;

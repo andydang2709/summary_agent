@@ -1,0 +1,24 @@
+# Data Repository .gitignore
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files
+.env
+*.env
+
+# Credentials and tokens
+*credentials*.json
+*token*.pickle
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Keep all summary files
+!*.txt
+!*.json
+!*.md
