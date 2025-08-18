@@ -49,8 +49,8 @@ In your MAIN repository (summary_agent), add these secrets:
 ## 7. Update Main Application
 
 The main application will now fetch from:
-- `https://[username].github.io/email-summary-data/file_index.json`
-- `https://[username].github.io/email-summary-data/logs/[filename]`
+- `https://andydang2709.github.io/email-summary-data/file_index.json`
+- `https://andydang2709.github.io/email-summary-data/logs/[filename]`
 
 ## File Structure After Setup
 

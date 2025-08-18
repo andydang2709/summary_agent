@@ -71,7 +71,7 @@ jobs:
         
         # Add all generated files
         git add .
-        git add ../file_index.json || echo "File index not found in parent directory"
+        git add email_summary/file_index.json || echo "File index not found in email_summary directory"
         
         # Commit changes
         if git diff --staged --quiet; then

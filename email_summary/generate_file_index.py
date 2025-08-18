@@ -73,6 +73,12 @@ def generate_file_index():
             shutil.copy2(filename, os.path.join(latest_dir, filename))
             print(f"✅ Copied {filename} to latest directory")
     
+    # Also save file index to the email_summary directory for GitHub Actions
+    local_index_file = 'file_index.json'
+    with open(local_index_file, 'w', encoding='utf-8') as f:
+        json.dump(index, f, indent=2, ensure_ascii=False)
+    print(f"💾 Local file index saved to: {local_index_file}")
+    
     return index
 
 def get_file_info(file_path, filename):

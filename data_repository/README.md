@@ -32,9 +32,9 @@ This repository is automatically updated daily by GitHub Actions from the main E
 ## Usage
 
 The main application fetches data from this repository via GitHub Pages URLs:
-- `https://[username].github.io/email-summary-data/file_index.json`
-- `https://[username].github.io/email-summary-data/logs/[filename]`
-- `https://[username].github.io/email-summary-data/latest/[filename]`
+- `https://andydang2709.github.io/email-summary-data/file_index.json`
+- `https://andydang2709.github.io/email-summary-data/logs/[filename]`
+- `https://andydang2709.github.io/email-summary-data/latest/[filename]`
 
 ## GitHub Pages
 
