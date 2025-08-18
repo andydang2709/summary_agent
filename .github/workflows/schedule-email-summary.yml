@@ -81,6 +81,15 @@ jobs:
         if [ -n "$DATA_REPO_TOKEN" ]; then
           echo "✅ DATA_REPO_TOKEN is available (length: ${#DATA_REPO_TOKEN})"
           echo "Token preview: ${DATA_REPO_TOKEN:0:4}...${DATA_REPO_TOKEN: -4}"
+          
+          # Validate token format
+          if [[ "$DATA_REPO_TOKEN" =~ ^ghp_[a-zA-Z0-9]{36}$ ]]; then
+            echo "✅ Token format looks correct (ghp_ + 36 chars)"
+          else
+            echo "⚠️ Token format may be incorrect"
+            echo "Expected: ghp_ + 36 characters"
+            echo "Actual length after ghp_: $(( ${#DATA_REPO_TOKEN} - 4 ))"
+          fi
         else
           echo "❌ DATA_REPO_TOKEN is NOT available"
         fi
@@ -92,12 +101,23 @@ jobs:
         # Add the data repository as a remote using Personal Access Token
         # Test repository access first
         echo "Testing repository access..."
-        if curl -H "Authorization: token $DATA_REPO_TOKEN" \
+        echo "Token being used: ${DATA_REPO_TOKEN:0:8}...${DATA_REPO_TOKEN: -4}"
+        
+        # Test with verbose output
+        echo "Testing API call..."
+        API_RESPONSE=$(curl -s -w "HTTP_STATUS:%{http_code}" \
+               -H "Authorization: token $DATA_REPO_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
-               "https://api.github.com/repos/andydang2709/email-summary-data" 2>/dev/null | grep -q '"id"'; then
+               "https://api.github.com/repos/andydang2709/email-summary-data")
+        
+        HTTP_STATUS=$(echo "$API_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+        echo "HTTP Status: $HTTP_STATUS"
+        
+        if [ "$HTTP_STATUS" = "200" ]; then
           echo "✅ Repository access confirmed via API"
         else
-          echo "❌ Repository access denied via API"
+          echo "❌ Repository access denied via API (Status: $HTTP_STATUS)"
+          echo "Response preview: ${API_RESPONSE:0:200}"
         fi
         
         # Try the separate data repository first, fallback to main repo
