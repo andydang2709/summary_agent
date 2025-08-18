@@ -64,7 +64,11 @@ jobs:
         git config --local user.name "github-actions[bot]"
         
         # Add the data repository as a remote using Personal Access Token
-        git remote add data-repo https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/${{ secrets.DATA_REPO_OWNER }}/email-summary-data.git
+        git remote add data-repo https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/andydang2709/email-summary-data.git
+        
+        # Debug: Check what remote was created
+        echo "Remote URL created:"
+        git remote -v
         
         # Create a new branch for the data
         git checkout -b data-update-$(date +%Y%m%d-%H%M%S)
