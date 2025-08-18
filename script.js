@@ -112,16 +112,12 @@ async function scanDataRepository() {
     try {
         console.log(`🔍 Scanning data repository: ${DATA_REPO_URL}`);
         
-        // Try to read individual files from the data repository
+        // Try to read individual files from the data repository (excluding storytelling files)
         const knownFiles = [
             'logs/20250817_email_summary_report.txt',
-            'logs/20250817_storytelling_summary.txt',
             'logs/20250816_email_summary_report.txt',
-            'logs/20250816_storytelling_summary.txt',
             'logs/20250815_email_summary_report.txt',
-            'logs/20250815_storytelling_summary.txt',
             'logs/20250814_email_summary_report.txt',
-            'logs/20250814_storytelling_summary.txt',
             'latest/today_email_summary_report.txt',
             'latest/executive_summary.txt'
         ];
@@ -182,6 +178,12 @@ function parseFileInfo(fileName, content) {
         return null;
     }
     
+    // Hide storytelling summary files from the main display
+    if (fileName.includes('storytelling')) {
+        console.log(`🚫 Hiding storytelling file: ${fileName} - not shown in main list`);
+        return null;
+    }
+    
     console.log(`✅ Accepting file: ${fileName} - is a .txt file`);
     
     // Extract date from filename (format: YYYYMMDD_*)
@@ -197,9 +199,7 @@ function parseFileInfo(fileName, content) {
     
     // Determine file type based on filename
     let fileType = 'summary';
-    if (fileName.includes('storytelling')) {
-        fileType = 'storytelling';
-    } else if (fileName.includes('executive')) {
+    if (fileName.includes('executive')) {
         fileType = 'executive';
     }
     
