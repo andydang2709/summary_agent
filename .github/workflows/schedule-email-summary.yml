@@ -63,6 +63,19 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         
+        # Debug: Check if secrets are available (without exposing values)
+        echo "Checking secrets availability..."
+        if [ -n "${{ secrets.DATA_REPO_TOKEN }}" ]; then
+          echo "✅ DATA_REPO_TOKEN is available (length: ${#DATA_REPO_TOKEN})"
+          echo "Token preview: ${DATA_REPO_TOKEN:0:4}...${DATA_REPO_TOKEN: -4}"
+        else
+          echo "❌ DATA_REPO_TOKEN is NOT available"
+        fi
+        
+        # Debug: Show the URL being constructed
+        echo "Constructing remote URL..."
+        echo "Base URL: https://x-access-token:${DATA_REPO_TOKEN:0:4}...@github.com/andydang2709/email-summary-data.git"
+        
         # Add the data repository as a remote using Personal Access Token
         git remote add data-repo https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/andydang2709/email-summary-data.git
         
