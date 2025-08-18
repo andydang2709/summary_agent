@@ -90,7 +90,23 @@ jobs:
         echo "Base URL: https://x-access-token:${DATA_REPO_TOKEN:0:4}...@github.com/andydang2709/email-summary-data.git"
         
         # Add the data repository as a remote using Personal Access Token
-        git remote add data-repo https://x-access-token:$DATA_REPO_TOKEN@github.com/andydang2709/email-summary-data.git
+        # Test repository access first
+        echo "Testing repository access..."
+        if curl -H "Authorization: token $DATA_REPO_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               "https://api.github.com/repos/andydang2709/email-summary-data" 2>/dev/null | grep -q '"id"'; then
+          echo "✅ Repository access confirmed via API"
+        else
+          echo "❌ Repository access denied via API"
+        fi
+        
+        # Try the separate data repository first, fallback to main repo
+        if git remote add data-repo https://x-access-token:$DATA_REPO_TOKEN@github.com/andydang2709/email-summary-data.git 2>/dev/null; then
+          echo "✅ Added data repository remote"
+        else
+          echo "⚠️ Data repository not accessible, using main repository"
+          git remote add data-repo https://x-access-token:$DATA_REPO_TOKEN@github.com/andydang2709/summary_agent.git
+        fi
         
         # Debug: Check what remote was created
         echo "Remote URL created:"
